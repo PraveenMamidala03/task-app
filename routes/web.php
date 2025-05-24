@@ -7,7 +7,7 @@ use App\Http\Requests\TaskRequest;
 
 
 Route::get('/', function () {
-    $tasks = Tasks::latest()->get();
+    $tasks = Tasks::latest()->paginate(10);
     return view('index', compact('tasks'));
 })->name('tasks.index');
 Route::view('/tasks/create', 'create')->name('tasks.create');
@@ -31,3 +31,7 @@ Route::delete('/tasks/{task}', function (Tasks $task) {
     $task->delete();
     return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
 })->name('tasks.destroy');
+Route::put('/tasks/{task}/complete', function (Tasks $task) {
+    $task->toggleCompleted();
+    return redirect()->back()->with('success', 'Task marked as completed!');
+})->name('tasks.toggle-complete');
