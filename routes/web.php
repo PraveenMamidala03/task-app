@@ -3,23 +3,31 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\Tasks;
 use Illuminate\Http\Request;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Requests\TaskRequest;
+
 
 Route::get('/', function () {
-    $tasks = Tasks::all();
+    $tasks = Tasks::latest()->get();
     return view('index', compact('tasks'));
-});
-
-Route::get('/tasks/{id}', function ($id) {
-    $task = Tasks::findOrFail($id);
+})->name('tasks.index');
+Route::view('/tasks/create', 'create')->name('tasks.create');
+Route::post('/tasks', function (TaskRequest $request) {
+    $task=Tasks::create($request->validated());
+    return redirect()->route('tasks.show', ['task' => $task->id])->with('success', 'Task created successfully!');
+})->name('tasks.store');
+Route::put('/tasks/{task}', function (Tasks $task,TaskRequest $request) {
+    $task->update($request->validated());
+    return redirect()->route('tasks.show', ['task' => $task->id])->with('success', 'Task updated successfully!');
+})->name('tasks.update');
+Route::get('/tasks/{task}/edit', function (Tasks $task) {
+    $task =  $task;
+    return view('edit', compact('task'));
+})->name('tasks.edit');
+Route::get('/tasks/{task}', function (Tasks $task) {
+    $task = $task;
     return view('show', compact('task'));
 })->name('tasks.show');
+Route::delete('/tasks/{task}', function (Tasks $task) {
+    $task->delete();
+    return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+})->name('tasks.destroy');
