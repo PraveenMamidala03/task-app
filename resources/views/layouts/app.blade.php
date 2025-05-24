@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Welcome to My Application</h1>
+   <h1>  @yield('title') </h1>
     <div>
         @yield('content')
     </div>

@@ -1,10 +1,15 @@
- 
 @extends('layouts.app')
+
+@section('title', 'The list of tasks')
+
 @section('content')
-    <h1>Welcome to the Home Page</h1>   
-
- @isset($name)
-    <h1>Hello, {{ $name }}</h1>   
- @endisset  
-
- @endsection
+    <ul>
+      @foreach ($tasks as $task)
+        <li>
+          <a href="{{ route('tasks.show', $task->id) }}">
+            {{ $task->title }}
+          </a>
+        </li>
+      @endforeach
+    </ul>
+@endsection
